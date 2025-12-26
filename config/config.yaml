@@ -1,0 +1,49 @@
+# Time Series Forecasting Pipeline Configuration
+
+data:
+  source: 'data/PJME_hourly.csv'
+  datetime_col: 'Datetime'
+  target_col: 'PJME_MW'
+  test_size: 0.1
+
+preprocessing:
+  handle_missing: 'interpolate'
+  outlier_method: 'iqr'
+  outlier_threshold: 3.0
+  scaling: null
+
+models:
+  arima:
+    auto_order: true
+    max_p: 5
+    max_d: 2
+    max_q: 5
+    criterion: 'aic'
+  
+  exponential_smoothing:
+    auto: true
+    seasonal_periods: 24
+    damped_trend: true
+  
+  lstm:
+    lookback: 24
+    units: [64, 32]
+    dropout: 0.2
+    epochs: 100
+    batch_size: 32
+    learning_rate: 0.001
+
+forecasting:
+  horizon: 168  # 1 week for hourly data
+  confidence_level: 0.95
+
+ensemble:
+  enabled: true
+  method: 'weighted'
+  weights: 'auto'
+
+output:
+  save_forecasts: true
+  save_plots: true
+  results_dir: 'results'
+  figures_dir: 'results/figures'
